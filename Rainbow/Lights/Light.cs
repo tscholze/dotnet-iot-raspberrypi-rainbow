@@ -41,9 +41,9 @@ public class Light
     {
         _pin = pin;
         _controller = controller;
-        IsOn = false;
-
         _controller.OpenPin(_pin, PinMode.Output);
+
+        IsOn = false;
     }
 
     #endregion

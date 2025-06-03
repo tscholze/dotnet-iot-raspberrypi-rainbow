@@ -6,7 +6,7 @@ namespace Rainbow.Lights;
 /// <summary>
 /// Represents the set of RGB LEDs on the Rainbow HAT, providing control over individual and combined LED states.
 /// </summary>
-public class Lights : IDisposable
+public class LightController : IDisposable
 {
     #region Constants
 
@@ -71,7 +71,7 @@ public class Lights : IDisposable
     /// <summary>
     /// Initializes a new instance of the Lights class and sets up the GPIO controller for all LEDs.
     /// </summary>
-    public Lights()
+    public LightController()
     {
         _controller = new GpioController();
 
