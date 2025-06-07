@@ -13,6 +13,13 @@ namespace Rainbow.Samples
     /// </summary>
     public static class Samples
     {
+        /// <summary>
+        /// Displays a simple text on the segment display for a specified duration.
+        /// The text defaults to ".NET" if no text is provided.
+        /// The display will be cleared after the duration.
+        /// </summary>
+        /// <param name="text">Text to show in display.</param>
+        /// <param name="duration">Duration to display the text (in milliseconds).</param>
         public static void ShowText(string text = ".NET", int duration = 5_000)
         {
             Console.WriteLine($"Displayed text '{text}' on the segment display.");
@@ -22,7 +29,32 @@ namespace Rainbow.Samples
             Console.WriteLine("Segment display text cleared.");
         }
 
-        public static void FullTour()
+        /// <summary>
+        /// Runs an interactive demonstration of all Rainbow HAT hardware features in sequence.
+        /// </summary>
+        /// <remarks>
+        /// This asynchronous method demonstrates the following components in order:
+        /// 1. Status LEDs (Red, Green, Blue) - Individual control with 1-second intervals
+        /// 2. APA102 RGB LED Strip - Color patterns and brightness control
+        /// 3. BMP280 Environmental Sensor - Temperature and pressure readings
+        /// 4. Alphanumeric Display - Scrolling text demonstration
+        /// 5. Touch Buttons (A, B, C) - Event handling with LED feedback
+        /// 
+        /// Each component demonstration includes console output to explain what's happening.
+        /// The tour uses a consistent pause interval (1000ms) between actions for clear visualization.
+        /// Button events remain active until the method completes, toggling the green LED when pressed.
+        /// </remarks>
+        /// <returns>
+        /// A Task representing the asynchronous operation. The task completes when the demonstration
+        /// finishes, but button event handlers remain active.
+        /// </returns>
+        /// <example>
+        /// Run the full hardware demonstration:
+        /// <code>
+        /// await Samples.FullTourAsync();
+        /// </code>
+        /// </example>
+        public static async Task FullTourAsync()
         {
             const int PauseInterval = 1000;
 
@@ -83,7 +115,7 @@ namespace Rainbow.Samples
 
             Console.WriteLine("Testing Rainbow HAT Segment Display...");
             using var segmentDisplayController = new SegmentDisplayController();
-            segmentDisplayController.DisplayText(".NET");
+            await segmentDisplayController.DisplayScrollingText("Hello, Rainbow HAT!", loop: false);
             Console.WriteLine("");
             Thread.Sleep(PauseInterval);
 

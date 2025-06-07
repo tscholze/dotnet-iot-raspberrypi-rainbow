@@ -3,7 +3,7 @@ using System.Device.I2c;
 namespace Rainbow.SegmentDisplay
 {
     /// <summary>
-    /// Controls the 4-digit 14-segment alphanumeric display on the Rainbow HAT
+    /// Controls the 4-digit 14-segment alphanumeric display on the Rainbow HAT.
     /// </summary>
     public class SegmentDisplayController : IDisposable
     {
@@ -35,7 +35,7 @@ namespace Rainbow.SegmentDisplay
             { '+', 0b0001001011000000 },
             { ',', 0b0000100000000000 },
             { '-', 0b0000000011000000 },
-            { '.', 0b0100000000000000 }, // Decimal point is bit 14
+            { '.', 0b0100000000000000 },
             { '/', 0b0000110000000000 },
             { '0', 0b0000110000111111 },
             { '1', 0b0000000000000110 },
@@ -195,8 +195,9 @@ namespace Rainbow.SegmentDisplay
             if (speed <= 0)
                 throw new ArgumentOutOfRangeException(nameof(speed), "Speed must be greater than 0");
 
-            // Add padding to create proper spacing between loops
-            string paddedText = text.PadRight(4) + (loop ? text : "    ");
+            // Add padding only when not looping to create a clean exit
+            // When looping, we want the text to seamlessly repeat
+            string paddedText = loop ? text + text : text.PadRight(4) + "    ";
 
             /// Transform speed to delay in milliseconds
             /// For example, speed of 1 means 1 character per second, so delay is 1000ms per character
