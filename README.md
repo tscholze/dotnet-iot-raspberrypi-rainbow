@@ -2,6 +2,10 @@
 
 This repository contains a comprehensive C# library for interacting with the [Pimoroni Rainbow HAT](https://shop.pimoroni.com/products/rainbow-hat-for-android-things) using .NET IoT. The Rainbow HAT is a beautiful add-on board for Raspberry Pi that includes various sensors and visual elements.
 
+<center>
+   <img src="_docs/image.png" height="200" alt="Image of the project" />
+</center>
+
 ## 🎯 Features
 
 The library provides easy-to-use controllers for all Rainbow HAT components:
