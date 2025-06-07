@@ -1,6 +1,4 @@
-using System;
 using System.Device.I2c;
-using System.Collections.Generic;
 
 namespace Rainbow.SegmentDisplay
 {
@@ -11,7 +9,16 @@ namespace Rainbow.SegmentDisplay
     {
         #region Constants
 
-        // Character map for alphanumeric display (ASCII 32-127)
+        /// <summary>
+        /// Bitmap / Bitmask for alphanumeric characters and their corresponding 14-segment display encoding.
+        /// <remarks>
+        /// This dictionary maps ASCII characters to their 14-segment display bit patterns.
+        /// Each character is represented by a 16-bit value, where:
+        /// - Bits 0-13 represent the segments of the display.
+        /// - Bit 14 (the 15th bit) represents the decimal point.
+        /// - Bit 15 is unused and set to 0.
+        /// </remarks>
+        /// </summary>
         private static readonly Dictionary<char, ushort> CharacterMap = new()
         {
             { ' ', 0b0000000000000000 },
@@ -111,16 +118,13 @@ namespace Rainbow.SegmentDisplay
             { '~', 0b0000010100100000 }
         };
 
-        // Position addresses for each digit (consecutive positions for 14-segment display)
-        private const int Digit1Addr = 0;
-        private const int Digit2Addr = 1;
-        private const int Digit3Addr = 2;
-        private const int Digit4Addr = 3;
-
         #endregion
 
         #region Private Fields
 
+        /// <summary>
+        /// Represents the underlying HT16K33 display controller.
+        /// </summary>
         private readonly Ht16k33 _display;
 
         #endregion
@@ -128,13 +132,12 @@ namespace Rainbow.SegmentDisplay
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the SegmentDisplayController
+        /// Initializes a new instance of the SegmentDisplayController.
+        /// <param name="device">Optional I2cDevice instance. If null, a new device will be created with default settings.</param>
         /// </summary>
-        public SegmentDisplayController()
+        public SegmentDisplayController(I2cDevice? device = null)
         {
-            var settings = new I2cConnectionSettings(1, Ht16k33.DefaultAddress);
-            var device = I2cDevice.Create(settings);
-            _display = new Ht16k33(device);
+            _display = new Ht16k33(device ?? I2cDevice.Create(new I2cConnectionSettings(1, Ht16k33.DefaultAddress)));
             Clear();
         }
 
@@ -169,6 +172,58 @@ namespace Rainbow.SegmentDisplay
             }
 
             _display.WriteDisplay();
+        }
+
+        /// <summary>
+        /// Displays scrolling text on the alphanumeric display.
+        /// </summary>
+        /// <param name="text">The text to scroll across the display</param>
+        /// <param name="speed">The scrolling speed in characters per second (default: 1)</param>
+        /// <param name="loop">Whether to continuously loop the text (default: true)</param>
+        /// <param name="cancellationToken">Optional token to cancel the scrolling</param>
+        /// <returns>A Task that completes when scrolling finishes or is cancelled</returns>
+        /// <remarks>
+        /// The text scrolls from right to left across the 4-digit display.
+        /// If loop is true, the text will continuously scroll until cancelled.
+        /// If loop is false, the text will scroll once and stop.
+        /// 
+        /// The scrolling can be cancelled at any time using the cancellationToken.
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when speed is less than or equal to 0</exception>
+        public async Task DisplayScrollingText(string text, double speed = 1, bool loop = true, CancellationToken cancellationToken = default)
+        {
+            if (speed <= 0)
+                throw new ArgumentOutOfRangeException(nameof(speed), "Speed must be greater than 0");
+
+            // Add padding to create proper spacing between loops
+            string paddedText = text.PadRight(4) + (loop ? text : "    ");
+
+            /// Transform speed to delay in milliseconds
+            /// For example, speed of 1 means 1 character per second, so delay is 1000ms per character
+            int delay = (int)(speed * 1000);
+
+            try
+            {
+                do
+                {
+                    // Iterate through the padded text, displaying 4-character windows
+                    for (int i = 0; i <= paddedText.Length - 4; i++)
+                    {
+                        // Extract the current 4-character window
+                        string currentText = paddedText.Substring(i, 4);
+                        DisplayText(currentText, justifyRight: false);
+
+                        // Wait for the next scroll step
+                        await Task.Delay(delay, cancellationToken);
+                    }
+                } while (loop && !cancellationToken.IsCancellationRequested);
+            }
+            catch (OperationCanceledException)
+            {
+                // Clear the display when cancelled
+                Clear();
+                throw;
+            }
         }
 
         /// <summary>

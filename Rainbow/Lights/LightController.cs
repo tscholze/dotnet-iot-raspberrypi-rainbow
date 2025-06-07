@@ -1,4 +1,3 @@
-using System;
 using System.Device.Gpio;
 
 namespace Rainbow.Lights;
@@ -32,7 +31,7 @@ public class LightController : IDisposable
     /// <summary>
     /// The GPIO controller instance used to manage the LED pins.
     /// </summary>
-    private readonly GpioController _controller;
+    private readonly GpioController _gpio;
 
     /// <summary>
     /// Array containing all LED instances for collective operations.
@@ -70,14 +69,15 @@ public class LightController : IDisposable
 
     /// <summary>
     /// Initializes a new instance of the Lights class and sets up the GPIO controller for all LEDs.
+    /// <param name="gpio">Optional GpioController instance to use. If null, a new instance will be created.</param>
     /// </summary>
-    public LightController()
+    public LightController(GpioController? gpio = null)
     {
-        _controller = new GpioController();
+        _gpio = gpio ?? new GpioController();
 
-        Red = new Light(RedPin, _controller);
-        Green = new Light(GreenPin, _controller);
-        Blue = new Light(BluePin, _controller);
+        Red = new Light(RedPin, _gpio);
+        Green = new Light(GreenPin, _gpio);
+        Blue = new Light(BluePin, _gpio);
         _all = [Red, Green, Blue];
     }
 
@@ -108,6 +108,7 @@ public class LightController : IDisposable
     /// </summary>
     public void Dispose()
     {
+        Console.WriteLine("Disposing LightController and turning off all lights...");
         // iterate _all and turn off all lights
         foreach (var light in _all)
         {
@@ -115,7 +116,7 @@ public class LightController : IDisposable
         }
 
         // close the GPIO pins
-        _controller?.Dispose();
+        _gpio?.Dispose();
     }
 
     #endregion

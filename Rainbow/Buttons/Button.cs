@@ -1,4 +1,3 @@
-using System;
 using System.Device.Gpio;
 
 namespace Rainbow.Buttons
@@ -19,7 +18,7 @@ namespace Rainbow.Buttons
         /// <summary>
         /// The GPIO controller instance used to interact with the physical pin.
         /// </summary>
-        private readonly GpioController _controller;
+        private readonly GpioController _gpio;
 
         #endregion
 
@@ -53,15 +52,15 @@ namespace Rainbow.Buttons
         /// Initializes a new instance of the Button class.
         /// </summary>
         /// <param name="id">The button identifier (A, B, or C)</param>
-        /// <param name="controller">The GPIO controller instance to use</param>
-        public Button(ButtonConfiguration id, GpioController controller)
+        /// <param name="gpio">The GPIO controller instance to use</param>
+        public Button(ButtonConfiguration id, GpioController gpio)
         {
             _id = id;
-            _controller = controller;
+            _gpio = gpio;
 
             // Configure the pin with a pull-up resistor
-            _controller.OpenPin(id.GetPin(), PinMode.InputPullUp);
-            _controller.RegisterCallbackForPinValueChangedEvent(
+            _gpio.OpenPin(id.GetPin(), PinMode.InputPullUp);
+            _gpio.RegisterCallbackForPinValueChangedEvent(
                 id.GetPin(),
                 PinEventTypes.Rising | PinEventTypes.Falling,
                 HandleButtonEvent
@@ -106,8 +105,8 @@ namespace Rainbow.Buttons
         /// </summary>
         public void Dispose()
         {
-            _controller.UnregisterCallbackForPinValueChangedEvent(_id.GetPin(), HandleButtonEvent);
-            _controller.ClosePin(_id.GetPin());
+            _gpio.UnregisterCallbackForPinValueChangedEvent(_id.GetPin(), HandleButtonEvent);
+            _gpio.ClosePin(_id.GetPin());
         }
 
         #endregion

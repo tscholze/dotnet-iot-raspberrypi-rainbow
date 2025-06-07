@@ -1,6 +1,4 @@
-using System;
 using System.Device.Gpio;
-using System.Threading;
 
 namespace Rainbow.Apa102
 {
@@ -59,13 +57,13 @@ namespace Rainbow.Apa102
         /// The GPIO controller instance used to manage pin I/O operations.
         /// This controller handles all direct communication with the hardware.
         /// </summary>
-        private readonly GpioController _gpio = new GpioController();
+        private readonly GpioController _gpio;
 
         /// <summary>
         /// Array of pixel data representing the current state of each LED.
         /// The array length matches <see cref="NumberOfPixels"/>.
         /// </summary>
-        private readonly Pixel[] _pixels;
+        private readonly Pixel[] _pixels = new Pixel[NumberOfPixels];
 
         #endregion
 
@@ -73,10 +71,12 @@ namespace Rainbow.Apa102
 
         /// <summary>
         /// Initializes a new instance of the APA102Controller class.
+        /// If no GpioController is provided, a new instance will be created.
+        /// <param name="gpio">Optional GpioController instance for GPIO operations.</param>
         /// </summary>
-        public Apa102Controller()
+        public Apa102Controller(GpioController? gpio =  null)
         {
-            _pixels = new Pixel[NumberOfPixels];
+            _gpio = gpio ?? new();
 
             // Initialize all pixels with default brightness
             for (int i = 0; i < NumberOfPixels; i++)

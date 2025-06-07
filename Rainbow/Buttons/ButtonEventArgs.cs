@@ -1,5 +1,3 @@
-using System;
-
 namespace Rainbow.Buttons
 {
     /// <summary>

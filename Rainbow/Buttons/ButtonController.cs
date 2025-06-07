@@ -1,4 +1,3 @@
-using System;
 using System.Device.Gpio;
 
 namespace Rainbow.Buttons
@@ -14,7 +13,7 @@ namespace Rainbow.Buttons
         /// <summary>
         /// The GPIO controller instance used to interact with the buttons
         /// </summary>
-        private readonly GpioController _controller = new GpioController();
+        private readonly GpioController _gpio;
 
         /// <summary>
         /// Array containing all button instances (A, B, C)
@@ -67,19 +66,22 @@ namespace Rainbow.Buttons
         /// <summary>
         /// Initializes a new instance of the ButtonController class.
         /// Sets up all three buttons and their event handlers.
+        /// <param name="gpio">Optional GpioController instance for GPIO operations.</param>
         /// </summary>
-        public ButtonController()
+        public ButtonController(GpioController? gpio = null)
         {
+            // Use provided controller or create a new one
+            _gpio = gpio ?? new GpioController();
+
             // Initialize to prevent null checks
             ButtonPressed += (s, e) => { };
             ButtonReleased += (s, e) => { };
 
-
             _buttons =
             [
-                new Button(ButtonConfiguration.A, _controller),
-                new Button(ButtonConfiguration.B, _controller),
-                new Button(ButtonConfiguration.C, _controller)
+                new Button(ButtonConfiguration.A, _gpio),
+                new Button(ButtonConfiguration.B, _gpio),
+                new Button(ButtonConfiguration.C, _gpio)
             ];
 
             foreach (var button in _buttons)
@@ -103,7 +105,7 @@ namespace Rainbow.Buttons
                 button?.Dispose();
             }
 
-            _controller?.Dispose();
+            _gpio?.Dispose();
         }
 
         #endregion

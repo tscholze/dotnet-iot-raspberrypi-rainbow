@@ -56,6 +56,9 @@ namespace Rainbow.Bmp280
         /// Initializes a new instance of the <see cref="Bmp280Controller"/> class.
         /// Sets up the I2C communication and configures the sensor for optimal readings.
         /// </summary>
+        /// <param name="device">
+        /// Optional I2C device instance. If null, a new I2C device is created on bus 1 with address 0x77.
+        /// </param>
         /// <remarks>
         /// The constructor:
         /// - Initializes I2C communication on bus 1 with address 0x77
@@ -65,12 +68,9 @@ namespace Rainbow.Bmp280
         /// <exception cref="System.Device.I2c.I2cException">
         /// Thrown when communication with the sensor cannot be established.
         /// </exception>
-        public Bmp280Controller()
+        public Bmp280Controller(I2cDevice? device = null)
         {
-            var i2cSettings = new I2cConnectionSettings(1, 0x77);
-            var i2cDevice = I2cDevice.Create(i2cSettings);
-            
-            _sensor = new Iot.Device.Bmxx80.Bmp280(i2cDevice)
+            _sensor = new Iot.Device.Bmxx80.Bmp280(device ?? I2cDevice.Create(new I2cConnectionSettings(1, 0x77)))
             {
                 TemperatureSampling = Sampling.UltraHighResolution,
                 PressureSampling = Sampling.UltraHighResolution
