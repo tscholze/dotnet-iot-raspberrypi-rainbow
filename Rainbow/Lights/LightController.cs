@@ -116,6 +116,9 @@ public class LightController : IDisposable
         }
 
         // close the GPIO pins
+        _gpio?.ClosePin(RedPin);
+        _gpio?.ClosePin(GreenPin);
+        _gpio?.ClosePin(BluePin);
         _gpio?.Dispose();
     }
 
