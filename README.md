@@ -21,9 +21,9 @@ The library provides easy-to-use controllers for all Rainbow HAT components:
 
 ### Prerequisites
 
-- Raspberry Pi (any model)
+- Raspberry Pi (any model later than 3)
 - Pimoroni Rainbow HAT
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - Basic knowledge of C# and .NET
 
 ### Installation
