@@ -8,9 +8,9 @@ namespace Rainbow.Apa102
     /// including GPIO control and LED data protocols.
     /// </summary>
     /// <remarks>
-    /// The APA102 LED strip uses a two-wire SPI-like protocol (clock and data)
-    /// with an additional chip select line. Each LED can be individually controlled
-    /// for color (RGB) and brightness.
+    /// The APA102 LED strip uses a two-wire SPI-like protocol (clock and data).
+    /// Synchronization is handled via start and end frames, so no chip select line
+    /// is required. Each LED can be individually controlled for color (RGB) and brightness.
     /// </remarks>
     public partial class Apa102Controller : IDisposable
     {
@@ -25,11 +25,6 @@ namespace Rainbow.Apa102
         /// GPIO pin number for the clock signal (SPI SCK).
         /// </summary>
         private const int ClockPin = 11;
-
-        /// <summary>
-        /// GPIO pin number for the chip select signal (SPI CS).
-        /// </summary>
-        private const int ChipSelectPin = 8;
 
         /// <summary>
         /// The number of RGB LEDs in the APA102 strip on the Rainbow HAT.
@@ -86,9 +81,7 @@ namespace Rainbow.Apa102
 
             _gpio.OpenPin(DataPin, PinMode.Output);
             _gpio.OpenPin(ClockPin, PinMode.Output);
-            _gpio.OpenPin(ChipSelectPin, PinMode.Output);
 
-            _gpio.Write(ChipSelectPin, PinValue.High);
             _gpio.Write(ClockPin, PinValue.Low);
             _gpio.Write(DataPin, PinValue.Low);
         }
@@ -177,7 +170,6 @@ namespace Rainbow.Apa102
         /// </summary>
         public void Show()
         {
-            _gpio.Write(ChipSelectPin, PinValue.Low);
             WriteStartFrame();
 
             foreach (var pixel in _pixels)
@@ -189,7 +181,6 @@ namespace Rainbow.Apa102
             }
 
             WriteEndFrame();
-            _gpio.Write(ChipSelectPin, PinValue.High);
         }
 
         #endregion
@@ -273,7 +264,6 @@ namespace Rainbow.Apa102
 
             _gpio.ClosePin(DataPin);
             _gpio.ClosePin(ClockPin);
-            _gpio.ClosePin(ChipSelectPin);
             _gpio.Dispose();
         }
 
