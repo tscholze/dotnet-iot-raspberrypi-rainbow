@@ -83,6 +83,34 @@ The project includes a comprehensive demo in `Samples.cs` that showcases all fea
 await Samples.FullTourAsync();
 ```
 
+## 🖥️ Rainbow.Maui.Gtk — GUI Control Hub
+
+The `Rainbow.Maui.Gtk` project provides a graphical control hub for the Rainbow HAT, built with [.NET MAUI on Linux via GTK4](https://github.com/Redth/Maui.Gtk). It runs directly on the Raspberry Pi and lets you interact with all hardware features through a desktop GUI.
+
+### Features
+
+- **💡 Status LEDs** — Toggle individual red, green, and blue LEDs or control all at once
+- **🎨 APA102 LED Strip** — Set solid colors, adjust brightness, or display a rainbow pattern
+- **🌡️ BMP280 Sensor** — Read live temperature and pressure data
+- **📊 Segment Display** — Show static or scrolling text on the 4-digit display
+- **🔊 Buzzer** — Play tones at configurable frequencies
+
+### Prerequisites
+
+- All base prerequisites (Raspberry Pi, Rainbow HAT, .NET 10.0 SDK)
+- GTK 4 libraries installed on the Pi:
+  ```bash
+  # Debian / Ubuntu / Raspberry Pi OS
+  sudo apt install libgtk-4-dev
+  ```
+
+### Running the GUI
+
+```bash
+cd Rainbow.Maui.Gtk
+dotnet run
+```
+
 ## 🔧 Hardware Components
 
 The Rainbow HAT includes:
@@ -100,6 +128,26 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📁 Project Structure
+
+```
+Rainbow.sln
+├── Rainbow/                     Console app & hardware library
+│   ├── Apa102/                  APA102 LED strip controller
+│   ├── Bmp280/                  BMP280 temperature/pressure sensor
+│   ├── Buttons/                 Capacitive touch buttons
+│   ├── Buzzer/                  Piezo buzzer controller
+│   ├── Lights/                  RGB status LED controller
+│   ├── SegmentDisplay/          4-digit alphanumeric display
+│   ├── Program.cs               Console demo entry point
+│   └── Samples.cs               Demo code
+└── Rainbow.Maui.Gtk/            MAUI GTK4 GUI control hub
+    ├── Program.cs               GtkMauiApplication entry point
+    ├── MauiProgram.cs           MAUI builder configuration
+    ├── App.cs                   MAUI Application class
+    └── MainPage.cs              Control hub page
+```
 
 ## ❤️ More IoT projects of mine
 I like to tinker around with Raspberry Pis, I created a couple of educational apps and scripts regarding the Pi and sensors - mostly from Pimoroni.
@@ -128,3 +176,4 @@ I like to tinker around with Raspberry Pis, I created a couple of educational ap
 - Pimoroni for the excellent Rainbow HAT hardware
 - .NET IoT team for the System.Device.Gpio library
 - IoT.Device.Bindings project for the BMP280 driver
+- [Platform.Maui.Linux.Gtk4](https://github.com/Redth/Maui.Gtk) for .NET MAUI on Linux via GTK4
