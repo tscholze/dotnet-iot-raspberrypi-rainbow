@@ -128,7 +128,7 @@ public class MainPage : ContentPage
     /// Creates the page header.
     /// </summary>
     /// <returns>The header view.</returns>
-    private static View CreateHeader()
+    private static VerticalStackLayout CreateHeader()
     {
         return new VerticalStackLayout
         {
@@ -158,7 +158,7 @@ public class MainPage : ContentPage
     /// Creates the hardware connection controls.
     /// </summary>
     /// <returns>The connection section view.</returns>
-    private View CreateConnectionSection()
+    private Border CreateConnectionSection()
     {
         var connectButton = new Button
         {
@@ -197,7 +197,7 @@ public class MainPage : ContentPage
     /// Creates the status LED controls.
     /// </summary>
     /// <returns>The LED section view.</returns>
-    private View CreateLedSection()
+    private Border CreateLedSection()
     {
         var redButton = new Button { Text = "Red", BackgroundColor = Colors.Red, TextColor = Colors.White };
         redButton.Clicked += (_, _) => ToggleLed(() => _lights?.Red.TurnToState(Target.Toggle));
@@ -239,7 +239,7 @@ public class MainPage : ContentPage
     /// Creates the APA102 LED strip controls.
     /// </summary>
     /// <returns>The APA102 section view.</returns>
-    private View CreateApa102Section()
+    private Border CreateApa102Section()
     {
         var brightnessSlider = new Slider { Minimum = 0, Maximum = 100, Value = 20, HorizontalOptions = LayoutOptions.Fill };
         brightnessSlider.ValueChanged += (_, e) =>
@@ -290,7 +290,7 @@ public class MainPage : ContentPage
     /// Creates the BMP280 sensor controls.
     /// </summary>
     /// <returns>The sensor section view.</returns>
-    private View CreateSensorSection()
+    private Border CreateSensorSection()
     {
         var readButton = new Button { Text = "Read Sensor" };
         readButton.Clicked += OnReadSensorClicked;
@@ -329,7 +329,7 @@ public class MainPage : ContentPage
     /// Creates the segment display controls.
     /// </summary>
     /// <returns>The segment display section view.</returns>
-    private View CreateDisplaySection()
+    private Border CreateDisplaySection()
     {
         var displayButton = new Button { Text = "Show Text" };
         displayButton.Clicked += OnDisplayTextClicked;
@@ -360,7 +360,7 @@ public class MainPage : ContentPage
     /// Creates the buzzer controls.
     /// </summary>
     /// <returns>The buzzer section view.</returns>
-    private View CreateBuzzerSection()
+    private Border CreateBuzzerSection()
     {
         var frequencySlider = new Slider { Minimum = 200, Maximum = 2000, Value = 440, HorizontalOptions = LayoutOptions.Fill };
         frequencySlider.ValueChanged += (_, e) =>
@@ -396,7 +396,7 @@ public class MainPage : ContentPage
     /// Creates the page footer.
     /// </summary>
     /// <returns>The footer view.</returns>
-    private static View CreateFooter()
+    private static Label CreateFooter()
     {
         return new Label
         {
