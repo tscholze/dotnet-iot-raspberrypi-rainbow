@@ -21,7 +21,7 @@ The library provides easy-to-use controllers for all Rainbow HAT components:
 
 ### Prerequisites
 
-- Raspberry Pi (any model later than 3)
+- Raspberry Pi 4
 - Pimoroni Rainbow HAT
 - .NET 10.0 SDK
 - Basic knowledge of C# and .NET
@@ -94,6 +94,7 @@ The `Rainbow.Maui.Gtk` project provides a graphical control hub for the Rainbow 
 - **🌡️ BMP280 Sensor** — Read live temperature and pressure data
 - **📊 Segment Display** — Show static or scrolling text on the 4-digit display
 - **🔊 Buzzer** — Play tones at configurable frequencies
+- **👆 Buttons** - Checks of one of the hardware buttons has been tapped
 
 ### Prerequisites
 
@@ -110,6 +111,13 @@ The `Rainbow.Maui.Gtk` project provides a graphical control hub for the Rainbow 
 cd Rainbow.Maui.Gtk
 dotnet run
 ```
+
+### Screenshot
+
+Running on RaspberryOS and an attached small Raspberry Pi Display, the user interface looks like the following.
+There is whith reason no customized control appereance.
+
+![GTK4 screenshot](https://github.com/tscholze/dotnet-iot-raspberrypi-rainbow/blob/main/_docs/gtk4.png?raw=true)
 
 ## 🔧 Hardware Components
 
