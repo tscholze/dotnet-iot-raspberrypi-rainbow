@@ -264,7 +264,7 @@ namespace Rainbow.SegmentDisplay
         /// </remarks>
         public void Dispose()
         {
-          _device?.Dispose();
+                        _device.Dispose();
         }
 
         #endregion

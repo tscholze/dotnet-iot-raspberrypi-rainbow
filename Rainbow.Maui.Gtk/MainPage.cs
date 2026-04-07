@@ -15,19 +15,70 @@ namespace Rainbow.Maui.Gtk;
 /// </summary>
 public class MainPage : ContentPage
 {
+    #region Private member
+
+    /// <summary>
+    /// Controls the onboard status LEDs.
+    /// </summary>
     private LightController? _lights;
+
+    /// <summary>
+    /// Controls the APA102 RGB LED strip.
+    /// </summary>
     private Apa102Controller? _apa102;
+
+    /// <summary>
+    /// Provides access to the BMP280 temperature and pressure sensor.
+    /// </summary>
     private Bmp280Controller? _bmp280;
+
+    /// <summary>
+    /// Controls the onboard buzzer.
+    /// </summary>
     private BuzzerController? _buzzer;
+
+    /// <summary>
+    /// Controls the alphanumeric segment display.
+    /// </summary>
     private SegmentDisplayController? _segmentDisplay;
 
+    /// <summary>
+    /// Displays connection and action status messages.
+    /// </summary>
     private readonly Label _statusLabel;
+
+    /// <summary>
+    /// Displays the latest temperature reading.
+    /// </summary>
     private readonly Label _temperatureLabel;
+
+    /// <summary>
+    /// Displays the latest pressure reading.
+    /// </summary>
     private readonly Label _pressureLabel;
+
+    /// <summary>
+    /// Captures user input for the segment display.
+    /// </summary>
     private readonly Entry _displayTextEntry;
+
+    /// <summary>
+    /// Displays the selected buzzer frequency.
+    /// </summary>
     private readonly Label _frequencyValueLabel;
+
+    /// <summary>
+    /// Displays the selected LED strip brightness.
+    /// </summary>
     private readonly Label _brightnessValueLabel;
 
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes the main page and builds the control surface.
+    /// </summary>
     public MainPage()
     {
         Title = "🌈 Rainbow HAT Control Hub";
@@ -69,6 +120,14 @@ public class MainPage : ContentPage
         };
     }
 
+    #endregion
+
+    #region View builders
+
+    /// <summary>
+    /// Creates the page header.
+    /// </summary>
+    /// <returns>The header view.</returns>
     private static View CreateHeader()
     {
         return new VerticalStackLayout
@@ -95,6 +154,10 @@ public class MainPage : ContentPage
         };
     }
 
+    /// <summary>
+    /// Creates the hardware connection controls.
+    /// </summary>
+    /// <returns>The connection section view.</returns>
     private View CreateConnectionSection()
     {
         var connectButton = new Button
@@ -130,6 +193,10 @@ public class MainPage : ContentPage
         };
     }
 
+    /// <summary>
+    /// Creates the status LED controls.
+    /// </summary>
+    /// <returns>The LED section view.</returns>
     private View CreateLedSection()
     {
         var redButton = new Button { Text = "🔴 Red", BackgroundColor = Colors.Red, TextColor = Colors.White };
@@ -168,6 +235,10 @@ public class MainPage : ContentPage
         });
     }
 
+    /// <summary>
+    /// Creates the APA102 LED strip controls.
+    /// </summary>
+    /// <returns>The APA102 section view.</returns>
     private View CreateApa102Section()
     {
         var brightnessSlider = new Slider { Minimum = 0, Maximum = 100, Value = 20, HorizontalOptions = LayoutOptions.Fill };
@@ -215,6 +286,10 @@ public class MainPage : ContentPage
         });
     }
 
+    /// <summary>
+    /// Creates the BMP280 sensor controls.
+    /// </summary>
+    /// <returns>The sensor section view.</returns>
     private View CreateSensorSection()
     {
         var readButton = new Button { Text = "📡 Read Sensor" };
@@ -250,6 +325,10 @@ public class MainPage : ContentPage
         });
     }
 
+    /// <summary>
+    /// Creates the segment display controls.
+    /// </summary>
+    /// <returns>The segment display section view.</returns>
     private View CreateDisplaySection()
     {
         var displayButton = new Button { Text = "📺 Show Text" };
@@ -277,6 +356,10 @@ public class MainPage : ContentPage
         });
     }
 
+    /// <summary>
+    /// Creates the buzzer controls.
+    /// </summary>
+    /// <returns>The buzzer section view.</returns>
     private View CreateBuzzerSection()
     {
         var frequencySlider = new Slider { Minimum = 200, Maximum = 2000, Value = 440, HorizontalOptions = LayoutOptions.Fill };
@@ -309,6 +392,10 @@ public class MainPage : ContentPage
         });
     }
 
+    /// <summary>
+    /// Creates the page footer.
+    /// </summary>
+    /// <returns>The footer view.</returns>
     private static View CreateFooter()
     {
         return new Label
@@ -321,6 +408,12 @@ public class MainPage : ContentPage
         };
     }
 
+    /// <summary>
+    /// Wraps content in a titled section container.
+    /// </summary>
+    /// <param name="title">The section title.</param>
+    /// <param name="content">The content to show inside the section.</param>
+    /// <returns>A bordered section view.</returns>
     private static Border CreateSection(string title, View content)
     {
         return new Border
@@ -345,6 +438,15 @@ public class MainPage : ContentPage
         };
     }
 
+    #endregion
+
+    #region Event handler
+
+    /// <summary>
+    /// Connects to the Rainbow HAT hardware controllers.
+    /// </summary>
+    /// <param name="sender">The button that raised the event.</param>
+    /// <param name="e">The click event data.</param>
     private void OnConnectClicked(object? sender, EventArgs e)
     {
         try
@@ -363,12 +465,21 @@ public class MainPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Disconnects from the Rainbow HAT hardware controllers.
+    /// </summary>
+    /// <param name="sender">The button that raised the event.</param>
+    /// <param name="e">The click event data.</param>
     private void OnDisconnectClicked(object? sender, EventArgs e)
     {
         DisposeControllers();
         SetStatus("Disconnected from hardware.", Colors.Gray);
     }
 
+    /// <summary>
+    /// Executes an LED action after verifying that the LED controller is connected.
+    /// </summary>
+    /// <param name="action">The LED action to execute.</param>
     private void ToggleLed(Action action)
     {
         if (_lights is null)
@@ -388,9 +499,14 @@ public class MainPage : ContentPage
         }
     }
 
-    private void SetStripColor(byte r, byte g, byte b, float brightness)
+    /// <summary>
+    /// Displays the current text entry on the segment display.
+    /// </summary>
+    /// <param name="sender">The button that raised the event.</param>
+    /// <param name="e">The click event data.</param>
+    private void OnDisplayTextClicked(object? sender, EventArgs e)
     {
-        if (_apa102 is null)
+        if (_segmentDisplay is null)
         {
             SetStatus("Not connected — press Connect first.", Colors.Orange);
             return;
@@ -398,19 +514,29 @@ public class MainPage : ContentPage
 
         try
         {
-            _apa102.SetAll(r, g, b, brightness);
-            _apa102.Show();
-            SetStatus($"LED strip set to RGB({r},{g},{b}) at {brightness:P0}.", Colors.Green);
+            var text = _displayTextEntry.Text;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                text = ".NET";
+            }
+
+            _segmentDisplay.DisplayText(text);
+            SetStatus($"Displaying '{text}'.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+            SetStatus($"Display error: {ex.Message}", Colors.Red);
         }
     }
 
-    private void SetRainbowPattern(float brightness)
+    /// <summary>
+    /// Scrolls the current text entry across the segment display.
+    /// </summary>
+    /// <param name="sender">The button that raised the event.</param>
+    /// <param name="e">The click event data.</param>
+    private async void OnScrollTextClicked(object? sender, EventArgs e)
     {
-        if (_apa102 is null)
+        if (_segmentDisplay is null)
         {
             SetStatus("Not connected — press Connect first.", Colors.Orange);
             return;
@@ -418,22 +544,25 @@ public class MainPage : ContentPage
 
         try
         {
-            _apa102.SetPixel(0, 255, 0, 0, brightness);
-            _apa102.SetPixel(1, 255, 127, 0, brightness);
-            _apa102.SetPixel(2, 255, 255, 0, brightness);
-            _apa102.SetPixel(3, 0, 255, 0, brightness);
-            _apa102.SetPixel(4, 0, 0, 255, brightness);
-            _apa102.SetPixel(5, 75, 0, 130, brightness);
-            _apa102.SetPixel(6, 148, 0, 211, brightness);
-            _apa102.Show();
-            SetStatus("Rainbow pattern displayed.", Colors.Green);
+            var text = _displayTextEntry.Text;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                text = "Hello, Rainbow HAT!";
+            }
+
+            SetStatus($"Scrolling '{text}'...", Colors.DodgerBlue);
+            await _segmentDisplay.DisplayScrollingText(text, loop: false);
+            SetStatus("Scrolling complete.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+            SetStatus($"Display error: {ex.Message}", Colors.Red);
         }
     }
 
+    /// <summary>
+    /// Clears the APA102 LED strip.
+    /// </summary>
     private void ClearStrip()
     {
         if (_apa102 is null)
@@ -454,6 +583,11 @@ public class MainPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Reads sensor data from the BMP280 and updates the UI.
+    /// </summary>
+    /// <param name="sender">The button that raised the event.</param>
+    /// <param name="e">The click event data.</param>
     private void OnReadSensorClicked(object? sender, EventArgs e)
     {
         if (_bmp280 is null)
@@ -483,57 +617,11 @@ public class MainPage : ContentPage
         }
     }
 
-    private void OnDisplayTextClicked(object? sender, EventArgs e)
-    {
-        if (_segmentDisplay is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
-
-        try
-        {
-            var text = _displayTextEntry.Text;
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                text = ".NET";
-            }
-
-            _segmentDisplay.DisplayText(text);
-            SetStatus($"Displaying '{text}'.", Colors.Green);
-        }
-        catch (Exception ex)
-        {
-            SetStatus($"Display error: {ex.Message}", Colors.Red);
-        }
-    }
-
-    private async void OnScrollTextClicked(object? sender, EventArgs e)
-    {
-        if (_segmentDisplay is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
-
-        try
-        {
-            var text = _displayTextEntry.Text;
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                text = "Hello, Rainbow HAT!";
-            }
-
-            SetStatus($"Scrolling '{text}'...", Colors.DodgerBlue);
-            await _segmentDisplay.DisplayScrollingText(text, loop: false);
-            SetStatus("Scrolling complete.", Colors.Green);
-        }
-        catch (Exception ex)
-        {
-            SetStatus($"Display error: {ex.Message}", Colors.Red);
-        }
-    }
-
+    /// <summary>
+    /// Clears the segment display.
+    /// </summary>
+    /// <param name="sender">The button that raised the event.</param>
+    /// <param name="e">The click event data.</param>
     private void OnClearDisplayClicked(object? sender, EventArgs e)
     {
         if (_segmentDisplay is null)
@@ -553,6 +641,71 @@ public class MainPage : ContentPage
         }
     }
 
+    #endregion
+
+    #region Actions
+
+    /// <summary>
+    /// Sets the entire APA102 strip to a single color and brightness.
+    /// </summary>
+    /// <param name="r">The red component value.</param>
+    /// <param name="g">The green component value.</param>
+    /// <param name="b">The blue component value.</param>
+    /// <param name="brightness">The normalized brightness value.</param>
+    private void SetStripColor(byte r, byte g, byte b, float brightness)
+    {
+        if (_apa102 is null)
+        {
+            SetStatus("Not connected — press Connect first.", Colors.Orange);
+            return;
+        }
+
+        try
+        {
+            _apa102.SetAll(r, g, b, brightness);
+            _apa102.Show();
+            SetStatus($"LED strip set to RGB({r},{g},{b}) at {brightness:P0}.", Colors.Green);
+        }
+        catch (Exception ex)
+        {
+            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+        }
+    }
+
+    /// <summary>
+    /// Displays a rainbow gradient across the APA102 strip.
+    /// </summary>
+    /// <param name="brightness">The normalized brightness value.</param>
+    private void SetRainbowPattern(float brightness)
+    {
+        if (_apa102 is null)
+        {
+            SetStatus("Not connected — press Connect first.", Colors.Orange);
+            return;
+        }
+
+        try
+        {
+            _apa102.SetPixel(0, 255, 0, 0, brightness);
+            _apa102.SetPixel(1, 255, 127, 0, brightness);
+            _apa102.SetPixel(2, 255, 255, 0, brightness);
+            _apa102.SetPixel(3, 0, 255, 0, brightness);
+            _apa102.SetPixel(4, 0, 0, 255, brightness);
+            _apa102.SetPixel(5, 75, 0, 130, brightness);
+            _apa102.SetPixel(6, 148, 0, 211, brightness);
+            _apa102.Show();
+            SetStatus("Rainbow pattern displayed.", Colors.Green);
+        }
+        catch (Exception ex)
+        {
+            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+        }
+    }
+
+    /// <summary>
+    /// Plays a tone on the buzzer.
+    /// </summary>
+    /// <param name="frequency">The tone frequency in hertz.</param>
     private void PlayBuzzer(int frequency)
     {
         if (_buzzer is null)
@@ -572,6 +725,9 @@ public class MainPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Stops the buzzer.
+    /// </summary>
     private void StopBuzzer()
     {
         if (_buzzer is null)
@@ -591,12 +747,24 @@ public class MainPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Updates the status message displayed on the page.
+    /// </summary>
+    /// <param name="message">The message to display.</param>
+    /// <param name="color">The message color.</param>
     private void SetStatus(string message, Color color)
     {
         _statusLabel.Text = message;
         _statusLabel.TextColor = color;
     }
 
+    #endregion
+
+    #region IDisposable implementation
+
+    /// <summary>
+    /// Disposes all hardware controllers and clears their references.
+    /// </summary>
     private void DisposeControllers()
     {
         _lights?.Dispose();
@@ -610,4 +778,6 @@ public class MainPage : ContentPage
         _segmentDisplay?.Dispose();
         _segmentDisplay = null;
     }
+
+    #endregion
 }

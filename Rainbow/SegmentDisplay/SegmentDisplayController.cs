@@ -356,6 +356,12 @@ namespace Rainbow.SegmentDisplay
 
         #region Private Methods
 
+        /// <summary>
+        /// Writes a character to a specific display position.
+        /// </summary>
+        /// <param name="position">The zero-based display position to update.</param>
+        /// <param name="character">The character to render.</param>
+        /// <param name="showDecimal">True to illuminate the decimal point for the character.</param>
         private void SetChar(int position, char character, bool showDecimal = false)
         {
             // Validate position (0-3 for 4 digits)
