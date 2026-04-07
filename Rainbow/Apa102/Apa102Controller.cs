@@ -8,8 +8,9 @@ namespace Rainbow.Apa102
     /// including GPIO control and LED data protocols.
     /// </summary>
     /// <remarks>
-    /// The APA102 LED strip uses a two-wire SPI-like protocol (clock and data)
-    /// with an additional chip select line. Each LED can be individually controlled
+    /// The APA102 LED strip uses a two-wire SPI-like protocol (clock and data).
+    /// On the Rainbow HAT, GPIO 8 (SPI CE0) is used as a chip select line to
+    /// bracket each transmission. Each LED can be individually controlled
     /// for color (RGB) and brightness.
     /// </remarks>
     public partial class Apa102Controller : IDisposable
