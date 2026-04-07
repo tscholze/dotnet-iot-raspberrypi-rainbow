@@ -43,11 +43,6 @@ public class MainPage : ContentPage
     private SegmentDisplayController? _segmentDisplay;
 
     /// <summary>
-    /// Displays connection and action status messages.
-    /// </summary>
-    private readonly Label _statusLabel;
-
-    /// <summary>
     /// Displays the latest temperature reading.
     /// </summary>
     private readonly Label _temperatureLabel;
@@ -88,17 +83,8 @@ public class MainPage : ContentPage
     {
         Title = "Rainbow HAT Control Hub";
 
-        _statusLabel = new Label
-        {
-            Text = "Ready — connect to hardware to begin.",
-            TextColor = Colors.Gray,
-            FontSize = 12,
-            HorizontalOptions = LayoutOptions.Center,
-            Margin = new Thickness(0, 0, 0, 10)
-        };
-
-        _temperatureLabel = new Label { Text = "—", FontSize = 18, HorizontalOptions = LayoutOptions.Center };
-        _pressureLabel = new Label { Text = "—", FontSize = 18, HorizontalOptions = LayoutOptions.Center };
+        _temperatureLabel = new Label { Text = "—", FontSize = 14, HorizontalOptions = LayoutOptions.Center };
+        _pressureLabel = new Label { Text = "—", FontSize = 14, HorizontalOptions = LayoutOptions.Center };
         _displayTextEntry = new Entry { Placeholder = "Enter text...", Text = ".NET", HorizontalOptions = LayoutOptions.Fill };
         _frequencyValueLabel = new Label { Text = "440 Hz", FontSize = 14, HorizontalOptions = LayoutOptions.Center };
         _brightnessValueLabel = new Label { Text = "20%", FontSize = 14, HorizontalOptions = LayoutOptions.Center };
@@ -112,8 +98,6 @@ public class MainPage : ContentPage
                 Children =
                 {
                     CreateHeader(),
-                    _statusLabel,
-                    CreateConnectionSection(),
                     CreateLedSection(),
                     CreateApa102Section(),
                     CreateSensorSection(),
@@ -143,7 +127,7 @@ public class MainPage : ContentPage
                 new Label
                 {
                     Text = "Rainbow HAT",
-                    FontSize = 28,
+                    FontSize = 18,
                     FontAttributes = FontAttributes.Bold,
                     HorizontalOptions = LayoutOptions.Center
                 },
@@ -155,45 +139,6 @@ public class MainPage : ContentPage
                     HorizontalOptions = LayoutOptions.Center,
                     Margin = new Thickness(0, 0, 0, 10)
                 }
-            }
-        };
-    }
-
-    /// <summary>
-    /// Creates the hardware connection controls.
-    /// </summary>
-    /// <returns>The connection section view.</returns>
-    private Border CreateConnectionSection()
-    {
-        var connectButton = new Button
-        {
-            Text = "Connect to Hardware",
-            BackgroundColor = Colors.DodgerBlue,
-            TextColor = Colors.White,
-            HorizontalOptions = LayoutOptions.Fill,
-            Margin = new Thickness(0, 0, 0, 10)
-        };
-        connectButton.Clicked += OnConnectClicked;
-
-        var disconnectButton = new Button
-        {
-            Text = "Disconnect",
-            BackgroundColor = Colors.Gray,
-            TextColor = Colors.White,
-            HorizontalOptions = LayoutOptions.Fill,
-            Margin = new Thickness(0, 0, 0, 5)
-        };
-        disconnectButton.Clicked += OnDisconnectClicked;
-
-        return new Border
-        {
-            Stroke = Colors.LightGray,
-            StrokeThickness = 1,
-            Padding = 15,
-            Content = new VerticalStackLayout
-            {
-                Spacing = 5,
-                Children = { connectButton, disconnectButton }
             }
         };
     }
@@ -228,13 +173,7 @@ public class MainPage : ContentPage
                 {
                     Spacing = 10,
                     HorizontalOptions = LayoutOptions.Center,
-                    Children = { redButton, greenButton, blueButton }
-                },
-                new HorizontalStackLayout
-                {
-                    Spacing = 10,
-                    HorizontalOptions = LayoutOptions.Center,
-                    Children = { allOnButton, allOffButton }
+                    Children = { redButton, greenButton, blueButton, allOnButton, allOffButton }
                 }
             }
         });
@@ -279,14 +218,8 @@ public class MainPage : ContentPage
                 {
                     Spacing = 10,
                     HorizontalOptions = LayoutOptions.Center,
-                    Children = { redStripButton, greenStripButton, blueStripButton }
+                    Children = { redStripButton, greenStripButton, blueStripButton, rainbowButton, clearStripButton  }
                 },
-                new HorizontalStackLayout
-                {
-                    Spacing = 10,
-                    HorizontalOptions = LayoutOptions.Center,
-                    Children = { rainbowButton, clearStripButton }
-                }
             }
         });
     }
@@ -434,7 +367,7 @@ public class MainPage : ContentPage
                     new Label
                     {
                         Text = title,
-                        FontSize = 18,
+                        FontSize = 16,
                         FontAttributes = FontAttributes.Bold
                     },
                     content
@@ -485,12 +418,10 @@ public class MainPage : ContentPage
             _bmp280 ??= new Bmp280Controller();
             _buzzer ??= new BuzzerController();
             _segmentDisplay ??= new SegmentDisplayController();
-
-            SetStatus("Connected to Rainbow HAT hardware.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Connection failed: {ex.Message}", Colors.Red);
+            Console.WriteLine($"Connection error: {ex.Message}");
         }
     }
 
@@ -502,7 +433,6 @@ public class MainPage : ContentPage
     private void OnDisconnectClicked(object? sender, EventArgs e)
     {
         DisposeControllers();
-        SetStatus("Disconnected from hardware.", Colors.Gray);
     }
 
     /// <summary>
@@ -511,20 +441,15 @@ public class MainPage : ContentPage
     /// <param name="action">The LED action to execute.</param>
     private void ToggleLed(Action action)
     {
-        if (_lights is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_lights is null) return;
 
         try
         {
             action();
-            SetStatus("LED toggled.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"LED error: {ex.Message}", Colors.Red);
+            Console.WriteLine($"LED error: {ex.Message}");
         }
     }
 
@@ -535,11 +460,7 @@ public class MainPage : ContentPage
     /// <param name="e">The click event data.</param>
     private void OnDisplayTextClicked(object? sender, EventArgs e)
     {
-        if (_segmentDisplay is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_segmentDisplay is null) return;
 
         try
         {
@@ -550,11 +471,10 @@ public class MainPage : ContentPage
             }
 
             _segmentDisplay.DisplayText(text);
-            SetStatus($"Displaying '{text}'.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Display error: {ex.Message}", Colors.Red);
+            Console.WriteLine($"Display error: {ex.Message}");
         }
     }
 
@@ -565,11 +485,7 @@ public class MainPage : ContentPage
     /// <param name="e">The click event data.</param>
     private async void OnScrollTextClicked(object? sender, EventArgs e)
     {
-        if (_segmentDisplay is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_segmentDisplay is null) return;
 
         try
         {
@@ -579,13 +495,11 @@ public class MainPage : ContentPage
                 text = "Hello, Rainbow HAT!";
             }
 
-            SetStatus($"Scrolling '{text}'...", Colors.DodgerBlue);
             await _segmentDisplay.DisplayScrollingText(text, loop: false);
-            SetStatus("Scrolling complete.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Display error: {ex.Message}", Colors.Red);
+            Console.WriteLine($"Display error: {ex.Message}");
         }
     }
 
@@ -594,21 +508,16 @@ public class MainPage : ContentPage
     /// </summary>
     private void ClearStrip()
     {
-        if (_apa102 is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_apa102 is null) return;
 
         try
         {
             _apa102.Clear();
             _apa102.Show();
-            SetStatus("LED strip cleared.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+            Console.WriteLine($"APA102 error: {ex.Message}");
         }
     }
 
@@ -619,11 +528,7 @@ public class MainPage : ContentPage
     /// <param name="e">The click event data.</param>
     private void OnReadSensorClicked(object? sender, EventArgs e)
     {
-        if (_bmp280 is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_bmp280 is null) return;
 
         try
         {
@@ -638,11 +543,10 @@ public class MainPage : ContentPage
                 ? $"{pressure.Value.Hectopascals:F0} hPa"
                 : "N/A";
 
-            SetStatus("Sensor data read successfully.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Sensor error: {ex.Message}", Colors.Red);
+            Console.WriteLine($"Sensor error: {ex.Message}");
         }
     }
 
@@ -653,20 +557,15 @@ public class MainPage : ContentPage
     /// <param name="e">The click event data.</param>
     private void OnClearDisplayClicked(object? sender, EventArgs e)
     {
-        if (_segmentDisplay is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_segmentDisplay is null) return;
 
         try
         {
             _segmentDisplay.Clear();
-            SetStatus("Display cleared.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Display error: {ex.Message}", Colors.Red);
+            Console.WriteLine($"Display error: {ex.Message}");
         }
     }
 
@@ -683,21 +582,16 @@ public class MainPage : ContentPage
     /// <param name="brightness">The normalized brightness value.</param>
     private void SetStripColor(byte r, byte g, byte b, float brightness)
     {
-        if (_apa102 is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_apa102 is null) return;
 
         try
         {
             _apa102.SetAll(r, g, b, brightness);
             _apa102.Show();
-            SetStatus($"LED strip set to RGB({r},{g},{b}) at {brightness:P0}.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+            System.Console.WriteLine($"APA102 error: {ex.Message}");
         }
     }
 
@@ -707,11 +601,7 @@ public class MainPage : ContentPage
     /// <param name="brightness">The normalized brightness value.</param>
     private void SetRainbowPattern(float brightness)
     {
-        if (_apa102 is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_apa102 is null) return;
 
         try
         {
@@ -723,11 +613,10 @@ public class MainPage : ContentPage
             _apa102.SetPixel(5, 75, 0, 130, brightness);
             _apa102.SetPixel(6, 148, 0, 211, brightness);
             _apa102.Show();
-            SetStatus("Rainbow pattern displayed.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"APA102 error: {ex.Message}", Colors.Red);
+            System.Console.WriteLine($"APA102 error: {ex.Message}");
         }
     }
 
@@ -737,20 +626,15 @@ public class MainPage : ContentPage
     /// <param name="frequency">The tone frequency in hertz.</param>
     private void PlayBuzzer(int frequency)
     {
-        if (_buzzer is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_buzzer is null) return;
 
         try
         {
             _buzzer.PlayNote(frequency, 1.0);
-            SetStatus($"Playing {frequency} Hz tone.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Buzzer error: {ex.Message}", Colors.Red);
+            System.Console.WriteLine($"Buzzer error: {ex.Message}");
         }
     }
 
@@ -759,32 +643,16 @@ public class MainPage : ContentPage
     /// </summary>
     private void StopBuzzer()
     {
-        if (_buzzer is null)
-        {
-            SetStatus("Not connected — press Connect first.", Colors.Orange);
-            return;
-        }
+        if (_buzzer is null) return;
 
         try
         {
             _buzzer.Stop();
-            SetStatus("Buzzer stopped.", Colors.Green);
         }
         catch (Exception ex)
         {
-            SetStatus($"Buzzer error: {ex.Message}", Colors.Red);
+            System.Console.WriteLine($"Buzzer stop error: {ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// Updates the status message displayed on the page.
-    /// </summary>
-    /// <param name="message">The message to display.</param>
-    /// <param name="color">The message color.</param>
-    private void SetStatus(string message, Color color)
-    {
-        _statusLabel.Text = message;
-        _statusLabel.TextColor = color;
     }
 
     #endregion
