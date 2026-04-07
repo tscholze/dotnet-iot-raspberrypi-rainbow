@@ -81,7 +81,7 @@ public class MainPage : ContentPage
     /// </summary>
     public MainPage()
     {
-        Title = "🌈 Rainbow HAT Control Hub";
+        Title = "Rainbow HAT Control Hub";
 
         _statusLabel = new Label
         {
@@ -137,7 +137,7 @@ public class MainPage : ContentPage
             {
                 new Label
                 {
-                    Text = "🌈 Rainbow HAT",
+                    Text = "Rainbow HAT",
                     FontSize = 28,
                     FontAttributes = FontAttributes.Bold,
                     HorizontalOptions = LayoutOptions.Center
@@ -162,7 +162,7 @@ public class MainPage : ContentPage
     {
         var connectButton = new Button
         {
-            Text = "🔌 Connect to Hardware",
+            Text = "Connect to Hardware",
             BackgroundColor = Colors.DodgerBlue,
             TextColor = Colors.White,
             HorizontalOptions = LayoutOptions.Fill,
@@ -172,7 +172,7 @@ public class MainPage : ContentPage
 
         var disconnectButton = new Button
         {
-            Text = "⏏ Disconnect",
+            Text = "Disconnect",
             BackgroundColor = Colors.Gray,
             TextColor = Colors.White,
             HorizontalOptions = LayoutOptions.Fill,
@@ -199,13 +199,13 @@ public class MainPage : ContentPage
     /// <returns>The LED section view.</returns>
     private View CreateLedSection()
     {
-        var redButton = new Button { Text = "🔴 Red", BackgroundColor = Colors.Red, TextColor = Colors.White };
+        var redButton = new Button { Text = "Red", BackgroundColor = Colors.Red, TextColor = Colors.White };
         redButton.Clicked += (_, _) => ToggleLed(() => _lights?.Red.TurnToState(Target.Toggle));
 
-        var greenButton = new Button { Text = "🟢 Green", BackgroundColor = Colors.Green, TextColor = Colors.White };
+        var greenButton = new Button { Text = "Green", BackgroundColor = Colors.Green, TextColor = Colors.White };
         greenButton.Clicked += (_, _) => ToggleLed(() => _lights?.Green.TurnToState(Target.Toggle));
 
-        var blueButton = new Button { Text = "🔵 Blue", BackgroundColor = Colors.Blue, TextColor = Colors.White };
+        var blueButton = new Button { Text = "Blue", BackgroundColor = Colors.Blue, TextColor = Colors.White };
         blueButton.Clicked += (_, _) => ToggleLed(() => _lights?.Blue.TurnToState(Target.Toggle));
 
         var allOnButton = new Button { Text = "All On", HorizontalOptions = LayoutOptions.Fill };
@@ -214,7 +214,7 @@ public class MainPage : ContentPage
         var allOffButton = new Button { Text = "All Off", HorizontalOptions = LayoutOptions.Fill };
         allOffButton.Clicked += (_, _) => ToggleLed(() => _lights?.Rgb(false, false, false));
 
-        return CreateSection("💡 Status LEDs", new VerticalStackLayout
+        return CreateSection("Status LEDs", new VerticalStackLayout
         {
             Spacing = 8,
             Children =
@@ -256,13 +256,13 @@ public class MainPage : ContentPage
         var blueStripButton = new Button { Text = "Blue", BackgroundColor = Colors.Blue, TextColor = Colors.White };
         blueStripButton.Clicked += (_, _) => SetStripColor(0, 0, 255, (float)(brightnessSlider.Value / 100));
 
-        var rainbowButton = new Button { Text = "🌈 Rainbow" };
+        var rainbowButton = new Button { Text = "Rainbow" };
         rainbowButton.Clicked += (_, _) => SetRainbowPattern((float)(brightnessSlider.Value / 100));
 
         var clearStripButton = new Button { Text = "Clear" };
         clearStripButton.Clicked += (_, _) => ClearStrip();
 
-        return CreateSection("🎨 APA102 LED Strip", new VerticalStackLayout
+        return CreateSection("APA102 LED Strip", new VerticalStackLayout
         {
             Spacing = 8,
             Children =
@@ -292,10 +292,10 @@ public class MainPage : ContentPage
     /// <returns>The sensor section view.</returns>
     private View CreateSensorSection()
     {
-        var readButton = new Button { Text = "📡 Read Sensor" };
+        var readButton = new Button { Text = "Read Sensor" };
         readButton.Clicked += OnReadSensorClicked;
 
-        return CreateSection("🌡️ BMP280 Sensor", new VerticalStackLayout
+        return CreateSection("BMP280 Sensor", new VerticalStackLayout
         {
             Spacing = 8,
             Children =
@@ -331,16 +331,16 @@ public class MainPage : ContentPage
     /// <returns>The segment display section view.</returns>
     private View CreateDisplaySection()
     {
-        var displayButton = new Button { Text = "📺 Show Text" };
+        var displayButton = new Button { Text = "Show Text" };
         displayButton.Clicked += OnDisplayTextClicked;
 
-        var scrollButton = new Button { Text = "📜 Scroll Text" };
+        var scrollButton = new Button { Text = "Scroll Text" };
         scrollButton.Clicked += OnScrollTextClicked;
 
         var clearDisplayButton = new Button { Text = "Clear" };
         clearDisplayButton.Clicked += OnClearDisplayClicked;
 
-        return CreateSection("📊 Segment Display", new VerticalStackLayout
+        return CreateSection("Segment Display", new VerticalStackLayout
         {
             Spacing = 8,
             Children =
@@ -368,13 +368,13 @@ public class MainPage : ContentPage
             _frequencyValueLabel.Text = $"{(int)e.NewValue} Hz";
         };
 
-        var playButton = new Button { Text = "🔊 Play Tone" };
+        var playButton = new Button { Text = "Play Tone" };
         playButton.Clicked += (_, _) => PlayBuzzer((int)frequencySlider.Value);
 
-        var stopButton = new Button { Text = "🔇 Stop" };
+        var stopButton = new Button { Text = "Stop" };
         stopButton.Clicked += (_, _) => StopBuzzer();
 
-        return CreateSection("🔊 Buzzer", new VerticalStackLayout
+        return CreateSection("Buzzer", new VerticalStackLayout
         {
             Spacing = 8,
             Children =
