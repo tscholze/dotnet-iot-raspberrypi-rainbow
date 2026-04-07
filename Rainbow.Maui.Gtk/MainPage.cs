@@ -72,6 +72,11 @@ public class MainPage : ContentPage
     /// </summary>
     private readonly Label _brightnessValueLabel;
 
+    /// <summary>
+    /// Tracks whether the initial auto-connect attempt has already run.
+    /// </summary>
+    private bool _autoConnectAttempted;
+
     #endregion
 
     #region Constructor
@@ -443,11 +448,35 @@ public class MainPage : ContentPage
     #region Event handler
 
     /// <summary>
+    /// Automatically attempts to connect to Rainbow HAT hardware when the page first appears.
+    /// </summary>
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (_autoConnectAttempted)
+        {
+            return;
+        }
+
+        _autoConnectAttempted = true;
+        ConnectHardware();
+    }
+
+    /// <summary>
     /// Connects to the Rainbow HAT hardware controllers.
     /// </summary>
     /// <param name="sender">The button that raised the event.</param>
     /// <param name="e">The click event data.</param>
     private void OnConnectClicked(object? sender, EventArgs e)
+    {
+        ConnectHardware();
+    }
+
+    /// <summary>
+    /// Creates or reuses hardware controllers and updates connection status.
+    /// </summary>
+    private void ConnectHardware()
     {
         try
         {
